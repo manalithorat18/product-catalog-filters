@@ -93,6 +93,8 @@ export default function App() {
           <div className="flex flex-col gap-5 min-w-0">
             <Toolbar
               total={result.pagination?.total ?? 0}
+              page={filters.page}
+              pageSize={filters.pageSize}
               isLoading={isLoading}
               sort={filters.sort}
               onSetSort={setSort}

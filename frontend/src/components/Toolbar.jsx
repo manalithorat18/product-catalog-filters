@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { SORT_OPTIONS } from '../hooks/useCatalogFilters';
 
-export default function Toolbar({ total, isLoading, sort, onSetSort, search, onSetSearch, onOpenDrawer, activeFilterCount }) {
+export default function Toolbar({ total, page, pageSize, isLoading, sort, onSetSort, search, onSetSearch, onOpenDrawer, activeFilterCount }) {
   const [searchDraft, setSearchDraft] = useState(search);
+  const firstResult = total === 0 ? 0 : (page - 1) * pageSize + 1;
+  const lastResult = Math.min(page * pageSize, total);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => setSearchDraft(search), 0);
@@ -32,7 +34,8 @@ export default function Toolbar({ total, isLoading, sort, onSetSort, search, onS
         <p className="font-mono text-xs text-ash">
           {isLoading ? 'Scanning catalog…' : (
             <>
-              <span className="text-bone">{total.toLocaleString()}</span> results
+              Showing <span className="text-bone">{firstResult.toLocaleString()}–{lastResult.toLocaleString()}</span> of{' '}
+              <span className="text-bone">{total.toLocaleString()}</span>
             </>
           )}
         </p>
