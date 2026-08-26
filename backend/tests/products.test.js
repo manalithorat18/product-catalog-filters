@@ -63,6 +63,39 @@ describe('GET /api/products', () => {
     res.body.data.forEach((p) => expect(['Audio', 'Gaming']).toContain(p.category));
   });
 
+  it('searches product names and brands', async () => {
+    const res = await request(app).get('/api/products').query({ search: 'Wavelen', pageSize: 48 });
+    expect(res.status).toBe(200);
+    expect(res.body.data.length).toBeGreaterThan(0);
+    res.body.data.forEach((p) => {
+      expect(`${p.name} ${p.brand}`.toLowerCase()).toContain('wavelen');
+    });
+  });
+
+  it('combines category, search and price filters', async () => {
+    const res = await request(app).get('/api/products').query({
+      category: 'Audio',
+      search: 'Wavelen',
+      minPrice: 50,
+      maxPrice: 200,
+      pageSize: 48,
+    });
+    expect(res.status).toBe(200);
+    res.body.data.forEach((p) => {
+      expect(p.category).toBe('Audio');
+      expect(p.price).toBeGreaterThanOrEqual(50);
+      expect(p.price).toBeLessThanOrEqual(200);
+      expect(`${p.name} ${p.brand}`.toLowerCase()).toContain('wavelen');
+    });
+  });
+
+  it('ignores empty category entries in comma-separated filters', async () => {
+    const res = await request(app).get('/api/products').query({ category: ',,Audio,', pageSize: 48 });
+    expect(res.status).toBe(200);
+    expect(res.body.appliedFilters.categories).toEqual(['Audio']);
+    res.body.data.forEach((p) => expect(p.category).toBe('Audio'));
+  });
+
   it('applies min/max price range', async () => {
     const res = await request(app)
       .get('/api/products')

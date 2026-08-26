@@ -1,6 +1,19 @@
+import { useEffect, useState } from 'react';
 import { SORT_OPTIONS } from '../hooks/useCatalogFilters';
 
 export default function Toolbar({ total, isLoading, sort, onSetSort, search, onSetSearch, onOpenDrawer, activeFilterCount }) {
+  const [searchDraft, setSearchDraft] = useState(search);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => setSearchDraft(search), 0);
+    return () => clearTimeout(timeoutId);
+  }, [search]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => onSetSearch(searchDraft), 250);
+    return () => clearTimeout(timeoutId);
+  }, [onSetSearch, searchDraft]);
+
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-center gap-3">
@@ -29,8 +42,8 @@ export default function Toolbar({ total, isLoading, sort, onSetSort, search, onS
         <div className="relative flex-1 sm:w-56">
           <input
             type="search"
-            value={search}
-            onChange={(e) => onSetSearch(e.target.value)}
+            value={searchDraft}
+            onChange={(e) => setSearchDraft(e.target.value)}
             placeholder="Search name or brand…"
             className="w-full rounded-full border border-line bg-surface2 px-3.5 py-2 text-sm text-bone placeholder:text-ash outline-none focus:border-signal"
           />
