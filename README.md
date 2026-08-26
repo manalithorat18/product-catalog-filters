@@ -31,7 +31,7 @@ the URL — built for the Task 1 brief ("Product Catalog Filters").
 
 ## Setup & Running
 
-Requires **Node.js 18+**.
+Requires **Node.js 22+**.
 
 ### 1. Backend
 
